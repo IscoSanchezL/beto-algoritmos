@@ -559,10 +559,11 @@
     const filas = Object.entries(perfiles).sort((x, y) => y[1].last - x[1].last).map(([k, p]) => `<div class="perfil-fila"><span>${esc(p.avatar)} <b>${esc(p.name)}</b> · ⭐${totalEstrellas(p)} · ${Object.keys(p.done).length}/${C.NIVELES.length} niveles</span>
       <span><button type="button" class="btn-peq gris" data-act="libre" data-k="${esc(k)}">${p.libre ? 'Bloquear niveles' : 'Abrir todos'}</button> <button type="button" class="btn-peq gris" data-act="reset" data-k="${esc(k)}">Reiniciar</button> <button type="button" class="btn-peq peligro" data-act="del" data-k="${esc(k)}">Borrar</button></span></div>`).join('') || '<p>Aún no hay niños registrados.</p>';
     form.innerHTML = `<h2>⚙️ Ajustes</h2>
-      <label>Voz de Beto (prueba hasta encontrar la más natural; en Edge busca las “Online (Natural)”)<select id="selVoz">${opciones}</select></label>
+      <p id="estadoVoz" style="margin:0;font-weight:700;background:#fff;border-radius:14px;padding:10px 14px">Revisando audios de Beto…</p>
+      <label>Voz de respaldo del navegador (solo suena en las frases que no tienen audio pregrabado)<select id="selVoz">${opciones}</select></label>
       <label>Velocidad al hablar <input type="range" id="ritmo" min="0.6" max="1.2" step="0.02" value="${cfg.ritmo}"></label>
       <label><input type="checkbox" id="mudo" ${cfg.silencio ? 'checked' : ''}> Silenciar voz y sonidos</label>
-      <div class="acciones"><button type="button" class="btn-peq" id="probar">▶ Probar voz</button></div>
+      <div class="acciones"><button type="button" class="btn-peq" id="probar">▶ Escuchar a Beto</button><button type="button" class="btn-peq gris" id="probar2">▶ Probar voz de respaldo</button></div>
       <h3>Niños en este equipo</h3>${filas}
       <h3>Copia de seguridad</h3>
       <div class="acciones"><button type="button" class="btn-peq" id="exportar">⬇ Descargar copia</button><label class="btn-peq gris" style="cursor:pointer">⬆ Cargar copia<input type="file" id="importar" accept="application/json" hidden></label></div>
@@ -571,7 +572,18 @@
     form.querySelector('#selVoz').onchange = (e) => { cfg.vozURI = e.target.value; LS.set(K_CFG, cfg); };
     form.querySelector('#ritmo').oninput = (e) => { cfg.ritmo = +e.target.value; LS.set(K_CFG, cfg); };
     form.querySelector('#mudo').onchange = (e) => { cfg.silencio = e.target.checked; LS.set(K_CFG, cfg); if (actual) pintaBarra(); };
-    form.querySelector('#probar').onclick = () => Voz.decir('¡Hola! Soy Beto, el robot. ¿Listo para aprender algoritmos?');
+    const muestra = C.todasLasFrases()[0];
+    form.querySelector('#probar').onclick = () => Voz.decir(muestra.texto, muestra.id);
+    form.querySelector('#probar2').onclick = () => Voz.decir('¡Hola! Soy Beto, el robot. ¿Listo para aprender algoritmos?');
+    (async () => {
+      const lista = C.todasLasFrases(), total = lista.length; let ok = 0, nombre = '';
+      await Promise.all(lista.map(async (f) => { if (await Voz.buscar(f.id)) ok++; }));
+      try { const r = await fetch('audio/voz.json'); if (r.ok) nombre = (await r.json()).voz || ''; } catch (e) { /* sin datos de la voz */ }
+      const el = form.querySelector('#estadoVoz'); if (!el) return;
+      el.textContent = ok === total ? `✅ Beto habla con audios pregrabados${nombre ? ' (' + nombre + ')' : ''}: ${ok} de ${total} frases.`
+        : ok ? `⚠️ Hay ${ok} de ${total} audios pregrabados. Las demás frases usan la voz de respaldo.`
+        : '⚠️ No hay audios pregrabados: Beto usa la voz del navegador (la de abajo).';
+    })();
     form.onclick = (e) => {
       const bt = e.target.closest('[data-act]'); if (!bt) return; const k = bt.dataset.k, p = perfiles[k];
       if (bt.dataset.act === 'libre') p.libre = !p.libre;
