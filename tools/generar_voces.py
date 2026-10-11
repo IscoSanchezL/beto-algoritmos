@@ -3,7 +3,7 @@
 
 Uso (desde la carpeta del proyecto):
     pip3 install edge-tts
-    python3 tools/generar_voces.py                    # voz por defecto: es-MX-DaliaNeural
+    python3 tools/generar_voces.py                    # voz por defecto: es-MX-JorgeNeural
     python3 tools/generar_voces.py --voz es-MX-JorgeNeural
     python3 tools/generar_voces.py --lista            # muestra las voces en español
     python3 tools/generar_voces.py --forzar           # regenera todo (por ejemplo al cambiar de voz)
@@ -46,7 +46,7 @@ async def generar(texto, destino, voz, rate, pitch, intentos=4):
 
 async def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--voz", default="es-MX-DaliaNeural")
+    ap.add_argument("--voz", default="es-MX-JorgeNeural")
     ap.add_argument("--rate", default="-5%", help="velocidad, ej. -10%% para más lento")
     ap.add_argument("--pitch", default="+6Hz", help="tono, ej. +10Hz para más agudo/amable")
     ap.add_argument("--forzar", action="store_true")
