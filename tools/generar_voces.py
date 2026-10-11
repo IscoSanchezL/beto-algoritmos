@@ -75,6 +75,7 @@ async def main():
             hechas += 1
         else:
             fallos += 1
+    (AUDIO / "voz.json").write_text(json.dumps({"voz": a.voz, "rate": a.rate, "pitch": a.pitch}), encoding="utf-8")
     print(f"\nGeneradas: {hechas} · ya existían: {saltadas} · fallidas: {fallos}  (voz: {a.voz})")
     if fallos:
         print("Vuelve a ejecutar el comando: solo repetirá las que faltan.")
