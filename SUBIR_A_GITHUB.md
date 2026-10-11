@@ -16,3 +16,12 @@ git push -u origin main
 4. Probar localmente: `python3 -m http.server 8000` y abrir http://localhost:8000
 5. Pruebas del simulador: `node tests/core.test.js`
 6. Publicar gratis: en GitHub → Settings → Pages → Branch `main` / root. El avance de los niños se guarda en cada navegador.
+
+## Voz neuronal de Beto (MP3 pregrabados)
+```bash
+pip3 install edge-tts
+python3 tools/generar_voces.py --probar      # prueba con 1 frase -> audio/_prueba.mp3
+python3 tools/generar_voces.py               # genera las 73 frases en audio/
+git add audio && git commit -m "Voz neuronal de Beto" && git push
+```
+Otras voces: `--lista` muestra las disponibles; `--voz es-MX-JorgeNeural` cambia la voz; `--forzar` regenera todo.

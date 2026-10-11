@@ -5,8 +5,7 @@
   const $app = document.getElementById('app');
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const AVATARES = ['🦊', '🐼', '🐯', '🦄', '🐸', '🐙', '🦁', '🐰', '🐵', '🐧', '🐶', '🐱'];
-  const ALABANZAS = ['¡Lo lograste!', '¡Genial!', '¡Eres un gran programador!', '¡Wow, qué bien!', '¡Excelente trabajo!', '¡Fantástico!'];
-
+  
   /* ================= Almacenamiento (a prueba de fallos) ================= */
   const LS = {
     get(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } },
@@ -30,6 +29,7 @@
     puntaje(v) {
       const n = v.name.toLowerCase(); let s = 0;
       if (/natural|neural|online/.test(n)) s += 6;
+      if (/premium|enhanced|mejorada|siri/.test(n)) s += 5;
       if (/google/.test(n)) s += 3;
       if (/paulina|m[oó]nica|sabina|helena|laura|luc[ií]a|marisol|dalia|elvira|paloma|catalina|camila|salome|valentina|female|mujer/.test(n)) s += 3;
       if (/es[-_]mx/i.test(v.lang)) s += 3; else if (/es[-_](us|419|co|ar)/i.test(v.lang)) s += 2; else if (/es[-_]es/i.test(v.lang)) s += 1;
@@ -41,15 +41,41 @@
       if (cfg.vozURI) { const v = this.voces.find((x) => x.voiceURI === cfg.vozURI); if (v) return v; }
       return [...this.voces].sort((a, b) => this.puntaje(b) - this.puntaje(a))[0] || null;
     },
-    token: 0,
-    parar() { this.token++; try { speechSynthesis.cancel(); } catch (e) { /* sin voz */ } },
+    token: 0, audio: null, archivos: new Map(),
+    parar() { this.token++; this.paraAudio(); try { speechSynthesis.cancel(); } catch (e) { /* sin voz */ } },
+    paraAudio() { if (this.audio) { try { this.audio.pause(); } catch (e) { /* nada */ } this.audio = null; } },
+    /* Busca audio/<id>.mp3 (voz neuronal pregrabada). Devuelve la URL o null si no existe. */
+    async buscar(id) {
+      if (!id) return null;
+      if (this.archivos.has(id)) return this.archivos.get(id);
+      let url = null;
+      try { const r = await fetch('audio/' + id + '.mp3', { method: 'HEAD' }); if (r.ok) url = 'audio/' + id + '.mp3'; } catch (e) { /* sin archivo */ }
+      this.archivos.set(id, url); return url;
+    },
+    tocar(url, tk) {
+      return new Promise((resolve) => {
+        const a = new Audio(url); this.audio = a; let fin = false;
+        const f = (ok) => { if (!fin) { fin = true; clearInterval(vigila); resolve(ok); } };
+        a.onended = () => f(true); a.onerror = () => f(false);
+        a.play().catch(() => f(false));
+        const vigila = setInterval(() => { if (tk !== this.token) { try { a.pause(); } catch (e) { /* nada */ } f(true); } }, 150);
+      });
+    },
     limpiar(t) { return String(t).replace(/\p{Extended_Pictographic}|️/gu, '').replace(/\s+/g, ' ').trim(); },
     /* Devuelve una promesa que se cumple cuando termina de hablar (o tras un tiempo prudente). */
-    decir(texto) {
-      const tk = ++this.token;
+    async decir(texto, id) {
+      const tk = ++this.token; this.paraAudio();
       const limpio = this.limpiar(texto);
       const espera = Math.max(900, limpio.length * 75);
-      if (cfg.silencio || !limpio || !('speechSynthesis' in window)) return sleep(Math.min(espera, 1800));
+      if (cfg.silencio || !limpio) return sleep(Math.min(espera, 1800));
+      const url = await this.buscar(id);
+      if (tk !== this.token) return;
+      if (url && await this.tocar(url, tk)) return;
+      if (tk !== this.token) return;
+      return this.hablar(limpio, tk, espera);
+    },
+    hablar(limpio, tk, espera) {
+      if (!('speechSynthesis' in window)) return sleep(Math.min(espera, 1800));
       return new Promise((resolve) => {
         let fin = false;
         const listo = () => { if (!fin) { fin = true; resolve(); } };
@@ -68,7 +94,9 @@
     }
   };
   try { Voz.cargar(); if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => Voz.cargar(); } catch (e) { /* sin voz */ }
-  const decir = (t) => Voz.decir(t.replace(/\{n\}/g, perfil() ? perfil().name : ''));
+  // t puede llevar {n} (nombre). Con audio pregrabado se usa la frase sin nombre; con la voz del navegador, con nombre.
+  const nom = (t) => t.replace(/\{n\}/g, perfil() ? perfil().name : '');
+  const decir = (t) => Voz.decir(nom(t), C.idFrase(C.generica(t)));
 
   /* ================= Sonidos (WebAudio) ================= */
   let audio;
@@ -196,7 +224,9 @@
         <button class="btn verde pulsa" type="submit">¡Empezar! 🚀</button>
       </form>
       <div id="recientes" class="recientes" aria-label="Niños que ya jugaron aquí"></div>
+      <button class="chip" id="profe" type="button">⚙️ Para la profe</button>
     </section>`);
+    el.querySelector('#profe').onclick = () => { Sfx.clic(); ajustes(); };
     el.querySelector('#pose').appendChild(betoPose(110));
     const av = el.querySelector('.avatares');
     function pintaAvatares() {
@@ -240,9 +270,8 @@
   function pantallaMapa(modo) {
     const p = perfil(); const sig = siguienteIdx();
     const terminado = C.NIVELES.every((n) => n.id in p.done);
-    const frase = modo === 'nuevo' ? `¡Hola, ${p.name}! Soy Beto. Toca el camino que brilla para empezar.`
-      : modo === 'vuelta' ? `¡Qué bueno verte otra vez, ${p.name}! Seguimos donde te quedaste.`
-      : terminado ? `¡${p.name}, completaste todo! Eres un gran programador. Puedes repetir los niveles.` : `${p.name}, elige el camino que brilla.`;
+    const plantilla = modo === 'nuevo' ? C.MSG.mapaNuevo : modo === 'vuelta' ? C.MSG.mapaVuelta : terminado ? C.MSG.mapaFin : C.MSG.mapaElige;
+    const frase = nom(plantilla);
     const el = h(`<section>
       <div class="mapa-cab"><div id="poseMapa"></div><div class="burbuja">${esc(frase)}</div>
         <button class="btn verde pulsa" id="seguir">${terminado ? '¡Jugar de nuevo!' : 'Continuar ▶'}</button></div>
@@ -264,7 +293,7 @@
     });
     el.querySelector('#seguir').onclick = () => abrirNivel(terminado ? 0 : sig);
     mostrar(el); pintaBarra();
-    decir(frase);
+    decir(plantilla);
   }
 
   function abrirNivel(i) {
@@ -279,16 +308,16 @@
     const p = perfil(); p.done[nivel.id] = Math.max(p.done[nivel.id] || 0, est); p.last = Date.now(); guardar(); pintaBarra();
   }
   function premio(i, est, extra) {
-    const nivel = C.NIVELES[i]; const hay = i + 1 < C.NIVELES.length; const alabanza = ALABANZAS[(Math.random() * ALABANZAS.length) | 0];
+    const nivel = C.NIVELES[i]; const hay = i + 1 < C.NIVELES.length; const alabanza = C.MSG.alabanzas[(Math.random() * C.MSG.alabanzas.length) | 0]; const ses = sesion;
     const caja = h(`<div class="premio-fondo"><div class="premio" role="dialog" aria-label="Nivel completado">
-      <h2>${alabanza.replace('!', ', ' + esc(perfil().name) + '!')}</h2>
+      <h2>${esc(nom(alabanza))}</h2>
       <div class="estrellas-gr" aria-label="${est} estrellas"><span>⭐</span><span>⭐</span><span>⭐</span></div>
       <p style="margin:0;font-weight:600">${esc(extra || '')}</p>
       <div class="acciones">${hay ? '<button class="btn verde pulsa" data-a="sig">Siguiente ▶</button>' : ''}
       <button class="btn amarillo" data-a="rep">Otra vez 🔁</button><button class="btn" data-a="mapa">Mapa 🗺️</button></div></div></div>`);
     document.body.appendChild(caja); confeti(); Sfx.gana();
     caja.querySelectorAll('.estrellas-gr span').forEach((s, k) => { if (k < est) setTimeout(() => { s.classList.add('on'); Sfx.estrella(); }, 400 + k * 450); });
-    decir(alabanza.replace('!', ', {n}!') + (est === 3 ? ' ¡Tres estrellas!' : ''));
+    decir(alabanza).then(() => { if (est === 3 && ses === sesion) decir(C.MSG.tres); });
     caja.onclick = (e) => {
       const a = e.target.closest('[data-a]'); if (!a) return;
       caja.remove(); Sfx.clic();
@@ -297,17 +326,7 @@
   }
 
   /* ================= Lección: ¿Qué es un algoritmo? ================= */
-  const DIAPOS = [
-    { titulo: '¡Hola, {n}!', grande: '👋', partes: [{ t: '¡Hola, {n}! Yo soy Beto, el robot. Hoy te voy a enseñar un secreto de los robots y de las computadoras.' }] },
-    { titulo: '¿Qué es un algoritmo?', pasos: [['🥣', 'Mezclar'], ['🔥', 'Hornear'], ['🎂', '¡Pastel!']],
-      partes: [{ t: 'Un algoritmo es una lista de pasos, uno después de otro, para hacer algo.' }, { t: 'Es como una receta de cocina. Primero mezclamos.', ver: 0 }, { t: 'Después horneamos.', ver: 1 }, { t: '¡Y al final tenemos un pastel!', ver: 2 }] },
-    { titulo: 'Lavarse los dientes', pasos: [['🪥', 'Tomar el cepillo'], ['🧴', 'Poner la pasta'], ['😁', 'Cepillar'], ['💦', 'Enjuagar']],
-      partes: [{ t: 'Tú ya usas algoritmos todos los días. Mira, para lavarte los dientes:' }, { t: 'Primero, tomas el cepillo.', ver: 0 }, { t: 'Luego, pones la pasta.', ver: 1 }, { t: 'Después, cepillas los dientes.', ver: 2 }, { t: 'Y al final, enjuagas tu boca.', ver: 3 }] },
-    { titulo: '¡El orden importa!', pasos: [['👟', 'Zapatos'], ['🧦', 'Medias']], loco: true, extra: [['🧦', 'Medias'], ['👟', 'Zapatos']],
-      partes: [{ t: '¿Y si primero te pones los zapatos y luego las medias?' }, { t: '¡Qué risa! Eso no funciona.', ver: [0, 1] }, { t: 'Primero las medias, y después los zapatos. Los pasos deben ir en el orden correcto.', ver: [2, 3] }] },
-    { titulo: 'Los robots obedecen', iconos: ['F', 'R', 'L'],
-      partes: [{ t: 'Los robots hacen exactamente lo que les dices, paso por paso.' }, { t: 'Yo puedo avanzar, girar a la derecha y girar a la izquierda.', ver: [0, 1, 2] }, { t: 'Tú serás el programador, y yo te haré caso. ¡Vamos a jugar!' }] }
-  ];
+  const DIAPOS = C.DIAPOS;
 
   function pantallaLeccion(idx) {
     let k = 0;
@@ -375,12 +394,12 @@
           if (sig === pasos.length) {
             listo = true; const ses = sesion; const est = fallos === 0 ? 3 : fallos <= 2 ? 2 : 1;
             guardarResultado(nivel, est);
-            await decir('¡Muy bien! ' + pasos.map((s, q) => (q === 0 ? 'Primero, ' : q === pasos.length - 1 ? 'Al final, ' : 'Luego, ') + s.t.toLowerCase().replace(/[¡!]/g, '')).join('. '));
+            await decir(nivel.cierre);
             if (ses === sesion) premio(idx, est, 'Ordenaste todos los pasos. ¡Eso es un algoritmo!');
-          } else decir(['¡Eso!', '¡Muy bien!', '¡Sí!'][sig % 3]);
+          } else decir(C.MSG.ordenBien[sig % 3]);
         } else {
           fallos++; Sfx.mal(); f.classList.remove('malo'); void f.offsetWidth; f.classList.add('malo');
-          decir(sig === 0 ? 'Mmm, ese no va primero. ¿Qué se hace al empezar?' : 'Ese todavía no. ¿Qué sigue después?');
+          decir(sig === 0 ? C.MSG.ordenMal1 : C.MSG.ordenMal2);
         }
       };
       bn.appendChild(f);
@@ -440,7 +459,7 @@
       const grupo = h('<div class="paleta" style="gap:8px;padding:6px 10px;background:rgba(255,255,255,.6);border-radius:20px"><b>🔁 Repetir:</b></div>');
       [2, 3, 4, 5, 6].forEach((n) => {
         const b = h(`<button class="pal-btn rep" aria-pressed="false" style="min-width:58px;height:58px;font-size:1.5rem" aria-label="Repetir ${n} veces">${n}</button>`);
-        b.onclick = () => { Sfx.clic(); pendienteRep = pendienteRep === n ? 0 : n; grupo.querySelectorAll('.rep').forEach((x) => x.setAttribute('aria-pressed', String(+x.textContent === pendienteRep))); if (pendienteRep) { msg.textContent = `Repetir ${n} veces… ¿qué quieres repetir?`; decir(`Repetir ${n} veces. Ahora elige qué repetir.`); } };
+        b.onclick = () => { Sfx.clic(); pendienteRep = pendienteRep === n ? 0 : n; grupo.querySelectorAll('.rep').forEach((x) => x.setAttribute('aria-pressed', String(+x.textContent === pendienteRep))); if (pendienteRep) { msg.textContent = `Repetir ${n} veces… ¿qué quieres repetir?`; decir(C.MSG.repetir[n]); } };
         grupo.appendChild(b);
       });
       pal.appendChild(grupo);
@@ -459,7 +478,7 @@
     function agrega(c) {
       if (corriendo) return;
       const tope = nivel.maxBlocks || 16;
-      if (programa.length >= tope) { Sfx.mal(); const t = nivel.maxBlocks ? '¡Usa el botón repetir para hacerlo con menos bloques!' : 'Ya son muchos pasos. Quita alguno.'; msg.textContent = t; decir(t); return; }
+      if (programa.length >= tope) { Sfx.mal(); const t = nivel.maxBlocks ? C.MSG.usaRepetir : C.MSG.muchos; msg.textContent = t; decir(t); return; }
       programa.push({ c, n: pendienteRep || 1 }); pendienteRep = 0;
       pal.querySelectorAll('.rep').forEach((x) => x.setAttribute('aria-pressed', 'false'));
       c === 'F' ? Sfx.paso() : Sfx.giro(); pintaPrograma(true);
@@ -477,7 +496,7 @@
     reinicia();
     async function correr() {
       if (corriendo) return;
-      if (!programa.length) { Sfx.mal(); msg.textContent = '¡Primero dale instrucciones a Beto!'; decir('Primero dale instrucciones a Beto. Toca las flechas.'); return; }
+      if (!programa.length) { Sfx.mal(); msg.textContent = '¡Primero dale instrucciones a Beto!'; decir(C.MSG.sinPasos); return; }
       const ses = sesion; corriendo = true; reinicia(); Voz.parar();
       el.querySelectorAll('button').forEach((b) => { if (b.id !== 'oir') b.disabled = true; });
       const res = C.simular(nivel, programa); msg.textContent = '¡Beto está en marcha! 🤖';
@@ -506,9 +525,9 @@
         await sleep(500); if (ses !== sesion) return; premio(idx, est, tip);
       } else {
         let t;
-        if (res.choco) t = '¡Ups! Beto chocó. Revisa los pasos e inténtalo otra vez.';
-        else if (res.faltan > 0 && res.llego) t = 'Llegaste, pero te faltó recoger una estrella. ¡Inténtalo otra vez!';
-        else t = 'Beto todavía no llegó a la bandera. ¡Casi! Agrega más pasos.';
+        if (res.choco) t = C.MSG.choco;
+        else if (res.faltan > 0 && res.llego) t = C.MSG.faltaEstrella;
+        else t = C.MSG.noLlego;
         msg.textContent = t; decir(t); await sleep(1400);
         if (ses !== sesion) return; reinicia();
       }

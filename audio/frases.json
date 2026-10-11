@@ -1,0 +1,294 @@
+[
+ {
+  "id": "hola-yo-soy-beto-el-robot-hoy-te-voy-138j39c",
+  "texto": "¡Hola! Yo soy Beto, el robot. Hoy te voy a enseñar un secreto de los robots y de las computadoras."
+ },
+ {
+  "id": "un-algoritmo-es-una-lista-de-pasos-u-1ssb7na",
+  "texto": "Un algoritmo es una lista de pasos, uno después de otro, para hacer algo."
+ },
+ {
+  "id": "es-como-una-receta-de-cocina-primero-19irfbw",
+  "texto": "Es como una receta de cocina. Primero mezclamos."
+ },
+ {
+  "id": "despues-horneamos-o7xwpa",
+  "texto": "Después horneamos."
+ },
+ {
+  "id": "y-al-final-tenemos-un-pastel-59ylrq",
+  "texto": "¡Y al final tenemos un pastel!"
+ },
+ {
+  "id": "tu-ya-usas-algoritmos-todos-los-dias-17j8ax6",
+  "texto": "Tú ya usas algoritmos todos los días. Mira, para lavarte los dientes:"
+ },
+ {
+  "id": "primero-tomas-el-cepillo-vxb1xs",
+  "texto": "Primero, tomas el cepillo."
+ },
+ {
+  "id": "luego-pones-la-pasta-1rdlzoi",
+  "texto": "Luego, pones la pasta."
+ },
+ {
+  "id": "despues-cepillas-los-dientes-77grw1",
+  "texto": "Después, cepillas los dientes."
+ },
+ {
+  "id": "y-al-final-enjuagas-tu-boca-14tebut",
+  "texto": "Y al final, enjuagas tu boca."
+ },
+ {
+  "id": "y-si-primero-te-pones-los-zapatos-y-kzun2g",
+  "texto": "¿Y si primero te pones los zapatos y luego las medias?"
+ },
+ {
+  "id": "que-risa-eso-no-funciona-1o4sqmw",
+  "texto": "¡Qué risa! Eso no funciona."
+ },
+ {
+  "id": "primero-las-medias-y-despues-los-zap-1y3vj64",
+  "texto": "Primero las medias, y después los zapatos. Los pasos deben ir en el orden correcto."
+ },
+ {
+  "id": "los-robots-hacen-exactamente-lo-que-15jj1nx",
+  "texto": "Los robots hacen exactamente lo que les dices, paso por paso."
+ },
+ {
+  "id": "yo-puedo-avanzar-girar-a-la-derecha-302hmo",
+  "texto": "Yo puedo avanzar, girar a la derecha y girar a la izquierda."
+ },
+ {
+  "id": "tu-seras-el-programador-y-yo-te-hare-1lagq1k",
+  "texto": "Tú serás el programador, y yo te haré caso. ¡Vamos a jugar!"
+ },
+ {
+  "id": "pon-los-pasos-en-orden-para-lavarte-1v5kpok",
+  "texto": "Pon los pasos en orden para lavarte los dientes. ¡Toca el primero!"
+ },
+ {
+  "id": "muy-bien-primero-tomar-el-cepillo-lu-1i4gse4",
+  "texto": "¡Muy bien! Primero, tomar el cepillo. Luego, poner la pasta. Luego, cepillar los dientes. Al final, enjuagar la boca"
+ },
+ {
+  "id": "ayuda-a-la-semilla-a-crecer-que-se-h-0a496d",
+  "texto": "Ayuda a la semilla a crecer. ¿Qué se hace primero?"
+ },
+ {
+  "id": "muy-bien-primero-hacer-un-hoyito-lue-1u8ikj6",
+  "texto": "¡Muy bien! Primero, hacer un hoyito. Luego, poner la semilla. Luego, echar agua. Al final, crece la flor"
+ },
+ {
+  "id": "que-hambre-ordena-los-pasos-del-sand-tw40jw",
+  "texto": "¡Qué hambre! Ordena los pasos del sándwich."
+ },
+ {
+  "id": "muy-bien-primero-poner-el-pan-luego-172tm2r",
+  "texto": "¡Muy bien! Primero, poner el pan. Luego, poner el queso. Luego, tapar con otro pan. Al final, a comer"
+ },
+ {
+  "id": "eso-1m3jz58",
+  "texto": "¡Eso!"
+ },
+ {
+  "id": "muy-bien-1cwphj8",
+  "texto": "¡Muy bien!"
+ },
+ {
+  "id": "si-1lwk81f",
+  "texto": "¡Sí!"
+ },
+ {
+  "id": "mmm-ese-no-va-primero-que-se-hace-al-12qu62m",
+  "texto": "Mmm, ese no va primero. ¿Qué se hace al empezar?"
+ },
+ {
+  "id": "ese-todavia-no-que-sigue-despues-7jcznu",
+  "texto": "Ese todavía no. ¿Qué sigue después?"
+ },
+ {
+  "id": "beto-quiere-llegar-a-la-bandera-toca-1n24e6a",
+  "texto": "Beto quiere llegar a la bandera. Toca la flecha para que avance. ¡Necesita dos pasos!"
+ },
+ {
+  "id": "toca-avanzar-dos-veces-y-luego-el-bo-1bpgnsd",
+  "texto": "Toca avanzar dos veces y luego el botón verde."
+ },
+ {
+  "id": "ahora-la-bandera-esta-mas-lejos-cuen-3n54k8",
+  "texto": "¡Ahora la bandera está más lejos! Cuenta los cuadros."
+ },
+ {
+  "id": "cuenta-cuantos-cuadros-hay-hasta-la-uwhf8m",
+  "texto": "Cuenta cuántos cuadros hay hasta la bandera."
+ },
+ {
+  "id": "beto-pasa-por-la-estrella-y-la-recog-4mzupr",
+  "texto": "Beto pasa por la estrella y la recoge. ¡Luego va a la bandera!"
+ },
+ {
+  "id": "si-avanzas-hasta-la-bandera-pasas-po-71049i",
+  "texto": "Si avanzas hasta la bandera, pasas por la estrella."
+ },
+ {
+  "id": "ahora-beto-sabe-girar-el-boton-de-la-13q6us",
+  "texto": "Ahora Beto sabe girar. El botón de la flecha curva a la derecha lo hace girar hacia su derecha."
+ },
+ {
+  "id": "avanza-dos-veces-gira-a-la-derecha-y-vdjcik",
+  "texto": "Avanza dos veces, gira a la derecha y avanza otras dos."
+ },
+ {
+  "id": "ahora-hay-que-subir-gira-a-la-izquie-zeg38p",
+  "texto": "Ahora hay que subir. Gira a la izquierda."
+ },
+ {
+  "id": "avanza-dos-veces-gira-a-la-izquierda-1yq6ibv",
+  "texto": "Avanza dos veces, gira a la izquierda y avanza dos veces."
+ },
+ {
+  "id": "recoge-la-estrella-de-la-esquina-y-l-1vesxq7",
+  "texto": "Recoge la estrella de la esquina y luego baja hasta la bandera."
+ },
+ {
+  "id": "primero-a-la-derecha-hasta-el-final-0szvm2",
+  "texto": "Primero a la derecha hasta el final, luego gira para bajar."
+ },
+ {
+  "id": "hay-una-roca-en-el-camino-beto-no-pu-vskir2",
+  "texto": "Hay una roca en el camino. Beto no puede pasar por encima. ¡Rodéala!"
+ },
+ {
+  "id": "sube-avanza-y-baja-despues-de-pasar-9c7k47",
+  "texto": "Sube, avanza, y baja después de pasar la roca."
+ },
+ {
+  "id": "que-camino-tan-largo-usa-el-boton-re-15u13ds",
+  "texto": "Qué camino tan largo. ¡Usa el botón repetir! Toca repetir tres, y luego avanzar."
+ },
+ {
+  "id": "repetir-seis-veces-y-avanzar-solo-un-1vsuhfs",
+  "texto": "Repetir seis veces y avanzar. ¡Solo un bloque!"
+ },
+ {
+  "id": "usa-repetir-para-avanzar-mucho-luego-c8qs7e",
+  "texto": "Usa repetir para avanzar mucho, luego gira y baja."
+ },
+ {
+  "id": "repite-seis-gira-a-la-derecha-repite-1ya5b34",
+  "texto": "Repite seis, gira a la derecha, repite dos."
+ },
+ {
+  "id": "un-tablero-grande-con-dos-estrellas-18imird",
+  "texto": "Un tablero grande con dos estrellas. ¡Tú puedes!"
+ },
+ {
+  "id": "repite-cuatro-gira-a-la-derecha-repi-mhnt7e",
+  "texto": "Repite cuatro, gira a la derecha, repite cuatro."
+ },
+ {
+  "id": "sube-y-baja-como-en-una-escalera-ava-1iu6ai8",
+  "texto": "Sube y baja como en una escalera. Avanza, gira, avanza, gira."
+ },
+ {
+  "id": "avanzar-derecha-avanzar-izquierda-se-131q78b",
+  "texto": "Avanzar, derecha, avanzar, izquierda… ¡se repite el patrón!"
+ },
+ {
+  "id": "el-ultimo-desafio-hay-un-muro-busca-ugqi0s",
+  "texto": "El último desafío. Hay un muro. Busca el camino por abajo. ¡Tú eres un gran programador!"
+ },
+ {
+  "id": "baja-pasa-por-debajo-del-muro-y-vuel-16gex6a",
+  "texto": "Baja, pasa por debajo del muro y vuelve a subir."
+ },
+ {
+  "id": "primero-dale-instrucciones-a-beto-to-snvut4",
+  "texto": "Primero dale instrucciones a Beto. Toca las flechas."
+ },
+ {
+  "id": "usa-el-boton-repetir-para-hacerlo-co-ngkivz",
+  "texto": "¡Usa el botón repetir para hacerlo con menos bloques!"
+ },
+ {
+  "id": "ya-son-muchos-pasos-quita-alguno-1ige50c",
+  "texto": "Ya son muchos pasos. Quita alguno."
+ },
+ {
+  "id": "ups-beto-choco-revisa-los-pasos-e-in-11bp97z",
+  "texto": "¡Ups! Beto chocó. Revisa los pasos e inténtalo otra vez."
+ },
+ {
+  "id": "llegaste-pero-te-falto-recoger-una-e-10ydgun",
+  "texto": "Llegaste, pero te faltó recoger una estrella. ¡Inténtalo otra vez!"
+ },
+ {
+  "id": "beto-todavia-no-llego-a-la-bandera-c-1b82j12",
+  "texto": "Beto todavía no llegó a la bandera. ¡Casi! Agrega más pasos."
+ },
+ {
+  "id": "repetir-2-veces-ahora-elige-que-repe-1t98r9v",
+  "texto": "Repetir 2 veces. Ahora elige qué repetir."
+ },
+ {
+  "id": "repetir-3-veces-ahora-elige-que-repe-v72060",
+  "texto": "Repetir 3 veces. Ahora elige qué repetir."
+ },
+ {
+  "id": "repetir-4-veces-ahora-elige-que-repe-1psz32t",
+  "texto": "Repetir 4 veces. Ahora elige qué repetir."
+ },
+ {
+  "id": "repetir-5-veces-ahora-elige-que-repe-yc59mq",
+  "texto": "Repetir 5 veces. Ahora elige qué repetir."
+ },
+ {
+  "id": "repetir-6-veces-ahora-elige-que-repe-06k6rz",
+  "texto": "Repetir 6 veces. Ahora elige qué repetir."
+ },
+ {
+  "id": "hola-soy-beto-toca-el-camino-que-bri-18w5pjg",
+  "texto": "¡Hola! Soy Beto. Toca el camino que brilla para empezar."
+ },
+ {
+  "id": "que-bueno-verte-otra-vez-seguimos-do-xmo3il",
+  "texto": "¡Qué bueno verte otra vez! Seguimos donde te quedaste."
+ },
+ {
+  "id": "completaste-todo-eres-un-gran-progra-15axg17",
+  "texto": "¡Completaste todo! Eres un gran programador. Puedes repetir los niveles."
+ },
+ {
+  "id": "elige-el-camino-que-brilla-sr41do",
+  "texto": "Elige el camino que brilla."
+ },
+ {
+  "id": "lo-lograste-1krkzv",
+  "texto": "¡Lo lograste!"
+ },
+ {
+  "id": "genial-20rpa3",
+  "texto": "¡Genial!"
+ },
+ {
+  "id": "eres-un-gran-programador-slysh3",
+  "texto": "¡Eres un gran programador!"
+ },
+ {
+  "id": "wow-que-bien-e5tfa1",
+  "texto": "¡Wow, qué bien!"
+ },
+ {
+  "id": "excelente-trabajo-1xhu9zj",
+  "texto": "¡Excelente trabajo!"
+ },
+ {
+  "id": "fantastico-1qx1bkt",
+  "texto": "¡Fantástico!"
+ },
+ {
+  "id": "tres-estrellas-sy8a7y",
+  "texto": "¡Tres estrellas!"
+ }
+]

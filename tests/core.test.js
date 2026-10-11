@@ -26,4 +26,13 @@ assert.ok(r.llego && r.faltan > 0 && !r.ok, 'sin todas las estrellas no es victo
 const ids = core.NIVELES.map((x) => x.id);
 assert.strictEqual(new Set(ids).size, ids.length, 'ids únicos');
 
+// Frases de voz: ids únicos, sin {n} en la versión grabable y todo texto hablado cubierto
+const frases = core.todasLasFrases();
+assert.strictEqual(new Set(frases.map((f) => f.id)).size, frases.length, 'ids de frases únicos');
+assert.ok(frases.every((f) => !f.texto.includes('{n}') && /^[a-z0-9-]+$/.test(f.id)), 'frases sin {n} e ids válidos');
+const cubiertas = new Set(frases.map((f) => f.id));
+const habladas = [].concat(core.TABLERO.flatMap((t) => [t.voz, t.pista]), core.ORDEN.flatMap((o) => [o.voz, o.cierre]), core.MSG.alabanzas, Object.values(core.MSG.repetir));
+habladas.forEach((t) => assert.ok(cubiertas.has(core.idFrase(core.generica(t))), 'sin audio previsto: ' + t));
+assert.strictEqual(core.generica('¡Hola, {n}! Soy Beto'), '¡Hola! Soy Beto');
+
 console.log(`OK: ${n} niveles de tablero verificados, ${ids.length} niveles en total.`);

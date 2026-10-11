@@ -57,6 +57,65 @@
     { n: 4, nombre: 'Repite y gana', emoji: '🔁', color: '#80ed99' }
   ];
 
+  const DIAPOS = [
+    { titulo: '¡Hola, {n}!', grande: '👋', partes: [{ t: '¡Hola, {n}! Yo soy Beto, el robot. Hoy te voy a enseñar un secreto de los robots y de las computadoras.' }] },
+    { titulo: '¿Qué es un algoritmo?', pasos: [['🥣', 'Mezclar'], ['🔥', 'Hornear'], ['🎂', '¡Pastel!']],
+      partes: [{ t: 'Un algoritmo es una lista de pasos, uno después de otro, para hacer algo.' }, { t: 'Es como una receta de cocina. Primero mezclamos.', ver: 0 }, { t: 'Después horneamos.', ver: 1 }, { t: '¡Y al final tenemos un pastel!', ver: 2 }] },
+    { titulo: 'Lavarse los dientes', pasos: [['🪥', 'Tomar el cepillo'], ['🧴', 'Poner la pasta'], ['😁', 'Cepillar'], ['💦', 'Enjuagar']],
+      partes: [{ t: 'Tú ya usas algoritmos todos los días. Mira, para lavarte los dientes:' }, { t: 'Primero, tomas el cepillo.', ver: 0 }, { t: 'Luego, pones la pasta.', ver: 1 }, { t: 'Después, cepillas los dientes.', ver: 2 }, { t: 'Y al final, enjuagas tu boca.', ver: 3 }] },
+    { titulo: '¡El orden importa!', pasos: [['👟', 'Zapatos'], ['🧦', 'Medias']], loco: true, extra: [['🧦', 'Medias'], ['👟', 'Zapatos']],
+      partes: [{ t: '¿Y si primero te pones los zapatos y luego las medias?' }, { t: '¡Qué risa! Eso no funciona.', ver: [0, 1] }, { t: 'Primero las medias, y después los zapatos. Los pasos deben ir en el orden correcto.', ver: [2, 3] }] },
+    { titulo: 'Los robots obedecen', iconos: ['F', 'R', 'L'],
+      partes: [{ t: 'Los robots hacen exactamente lo que les dices, paso por paso.' }, { t: 'Yo puedo avanzar, girar a la derecha y girar a la izquierda.', ver: [0, 1, 2] }, { t: 'Tú serás el programador, y yo te haré caso. ¡Vamos a jugar!' }] }
+  ];
+
+  // Cierre hablado de cada rutina (se construye con los pasos de la misma rutina).
+  ORDEN.forEach((o) => {
+    o.cierre = '¡Muy bien! ' + o.pasos.map((s, q) => (q === 0 ? 'Primero, ' : q === o.pasos.length - 1 ? 'Al final, ' : 'Luego, ') + s[1].toLowerCase().replace(/[¡!]/g, '')).join('. ');
+  });
+
+  /* ---------- Mensajes hablados ----------
+     {n} = nombre del niño. Con voz grabada se dice la frase SIN nombre (ver generica). */
+  const MSG = {
+    mapaNuevo: '¡Hola, {n}! Soy Beto. Toca el camino que brilla para empezar.',
+    mapaVuelta: '¡Qué bueno verte otra vez, {n}! Seguimos donde te quedaste.',
+    mapaFin: '¡Completaste todo, {n}! Eres un gran programador. Puedes repetir los niveles.',
+    mapaElige: 'Elige el camino que brilla, {n}.',
+    alabanzas: ['¡Lo lograste, {n}!', '¡Genial, {n}!', '¡Eres un gran programador, {n}!', '¡Wow, qué bien, {n}!', '¡Excelente trabajo, {n}!', '¡Fantástico, {n}!'],
+    tres: '¡Tres estrellas!',
+    ordenBien: ['¡Eso!', '¡Muy bien!', '¡Sí!'],
+    ordenMal1: 'Mmm, ese no va primero. ¿Qué se hace al empezar?',
+    ordenMal2: 'Ese todavía no. ¿Qué sigue después?',
+    sinPasos: 'Primero dale instrucciones a Beto. Toca las flechas.',
+    repetir: { 2: 'Repetir 2 veces. Ahora elige qué repetir.', 3: 'Repetir 3 veces. Ahora elige qué repetir.', 4: 'Repetir 4 veces. Ahora elige qué repetir.', 5: 'Repetir 5 veces. Ahora elige qué repetir.', 6: 'Repetir 6 veces. Ahora elige qué repetir.' },
+    usaRepetir: '¡Usa el botón repetir para hacerlo con menos bloques!',
+    muchos: 'Ya son muchos pasos. Quita alguno.',
+    choco: '¡Ups! Beto chocó. Revisa los pasos e inténtalo otra vez.',
+    faltaEstrella: 'Llegaste, pero te faltó recoger una estrella. ¡Inténtalo otra vez!',
+    noLlego: 'Beto todavía no llegó a la bandera. ¡Casi! Agrega más pasos.'
+  };
+
+  /* ---------- Frases grabables ---------- */
+  const generica = (t) => t.replace(/,?\s*\{n\}/g, '').replace(/\s+/g, ' ').trim();
+  function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36).padStart(6, '0'); }
+  function slug(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 36).replace(/-$/, ''); }
+  const idFrase = (t) => slug(t) + '-' + hash(t);
+
+  function todasLasFrases() {
+    const out = [], visto = new Set();
+    const add = (sec, t) => { const g = generica(t); const id = idFrase(g); if (!visto.has(id)) { visto.add(id); out.push({ sec, texto: g, id }); } };
+    DIAPOS.forEach((d) => d.partes.forEach((p) => add('1. Lección: ¿Qué es un algoritmo?', p.t)));
+    ORDEN.forEach((o) => { add('2. Ordenar pasos · ' + o.titulo, o.voz); add('2. Ordenar pasos · ' + o.titulo, o.cierre); });
+    add('3. Mensajes de Ordenar', MSG.ordenBien[0]); MSG.ordenBien.slice(1).forEach((t) => add('3. Mensajes de Ordenar', t));
+    add('3. Mensajes de Ordenar', MSG.ordenMal1); add('3. Mensajes de Ordenar', MSG.ordenMal2);
+    TABLERO.forEach((t) => { add('4. Beto · ' + t.titulo, t.voz); add('4. Beto · ' + t.titulo, t.pista); });
+    ['sinPasos', 'usaRepetir', 'muchos', 'choco', 'faltaEstrella', 'noLlego'].forEach((k) => add('5. Mensajes de Beto', MSG[k]));
+    Object.keys(MSG.repetir).forEach((k) => add('5. Mensajes de Beto', MSG.repetir[k]));
+    ['mapaNuevo', 'mapaVuelta', 'mapaFin', 'mapaElige'].forEach((k) => add('6. Mapa y felicitaciones', MSG[k]));
+    MSG.alabanzas.forEach((t) => add('6. Mapa y felicitaciones', t)); add('6. Mapa y felicitaciones', MSG.tres);
+    return out;
+  }
+
   // Orden completo del camino: la lección es el nivel 0.
   const NIVELES = [].concat(
     [{ id: 'leccion', tipo: 'leccion', mundo: 1, titulo: '¿Qué es un algoritmo?' }],
@@ -114,7 +173,7 @@
     return 1;
   }
 
-  const api = { DX, DY, ORDEN, TABLERO, MUNDOS, NIVELES, simular, estrellasGanadas };
+  const api = { DX, DY, ORDEN, TABLERO, MUNDOS, NIVELES, DIAPOS, MSG, simular, estrellasGanadas, generica, idFrase, todasLasFrases };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.AlgoCore = api;
 })(typeof window !== 'undefined' ? window : globalThis);
